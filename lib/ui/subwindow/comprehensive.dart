@@ -101,7 +101,10 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
         Expanded(
           child: Container(
             // White edge on the left & right.
-            // constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width > 1280
+                    ? MediaQuery.of(context).size.width * 0.8
+                    : MediaQuery.of(context).size.width),
             child: RefreshIndicator(
               onRefresh: () async => _get(true),
               child: FutureBuilder<ShopInformationEntity>(
