@@ -34,7 +34,7 @@ class ShadowBox extends StatelessWidget {
       //color: Colors.deepPurple,
       elevation: 20.0,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        borderRadius: BorderRadius.all(Radius.circular(5)),
       ),
       semanticContainer: false,
       child: child,
@@ -48,20 +48,20 @@ class TagsBoxes extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
 
-  const TagsBoxes({
-    Key? key,
-    required this.text,
-    this.backgroundColor = Colors.blue,
-    this.textColor = Colors.white
-  }) : super(key: key);
+  const TagsBoxes(
+      {Key? key,
+      required this.text,
+      this.backgroundColor = Colors.blue,
+      this.textColor = Colors.white})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(2.5),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: const BorderRadius.all(Radius.circular(9)),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
       ),
       child: Text(
         text,

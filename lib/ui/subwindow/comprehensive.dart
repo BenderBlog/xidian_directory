@@ -21,6 +21,7 @@ if you want to use.
 
 import 'package:flutter/material.dart';
 import 'package:xidian_directory/weight.dart';
+import 'package:xidian_directory/SliverGridDelegateWithFixedHeight.dart';
 import 'package:xidian_directory/data/shop_information_entity.dart';
 import 'package:xidian_directory/communicate/XidianDirectorySession.dart';
 
@@ -37,6 +38,7 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.width);
     return Column(
       children: [
         Container(
@@ -50,7 +52,7 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
               ),
             ],
           ),
-          child:Row(
+          child: Row(
             children: [
               Expanded(
                 child: Padding(
@@ -85,7 +87,7 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
                   ],
                   onChanged: (String? value) {
                     setState(
-                          () {
+                      () {
                         categoryToSent = value!;
                         _get(false);
                       },
@@ -96,8 +98,10 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
             ],
           ),
         ),
-
         Expanded(
+          child: Container(
+            // White edge on the left & right.
+            // constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
             child: RefreshIndicator(
               onRefresh: () async => _get(true),
               child: FutureBuilder<ShopInformationEntity>(
@@ -107,10 +111,13 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
                     if (snapshot.hasError) {
                       return Center(child: Text("坏事: ${snapshot.error}"));
                     } else {
-                      return ListView(
-                        children: [
-                          for (var i in snapshot.data.results) ShopCard(toUse: i),
-                        ],
+                      return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedHeight(
+                            maxCrossAxisExtent: 324, height: 200),
+                        itemCount: snapshot.data.results.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) =>
+                            ShopCard(toUse: snapshot.data.results[index]),
                       );
                     }
                   } else {
@@ -118,14 +125,15 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
                   }
                 },
               ),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Future<ShopInformationEntity> _get(bool isForceUpdate) async =>
-      getShopData(category: categoryToSent, toFind: toSearch, isForceUpdate: isForceUpdate);
+  Future<ShopInformationEntity> _get(bool isForceUpdate) async => getShopData(
+      category: categoryToSent, toFind: toSearch, isForceUpdate: isForceUpdate);
 }
 
 class ShopCard extends StatelessWidget {
@@ -133,84 +141,111 @@ class ShopCard extends StatelessWidget {
 
   const ShopCard({Key? key, required this.toUse}) : super(key: key);
 
-  Icon _iconForTarget () {
+  Icon _iconForTarget() {
     switch (toUse.category) {
-      case '饮食': return const Icon(Icons.restaurant);
-      case '生活': return const Icon(Icons.nightlife);
-      case '打印': return const Icon(Icons.print);
-      case '学习': return const Icon(Icons.book);
-      case '快递': return const Icon(Icons.local_shipping);
-      case '超市': return const Icon(Icons.store);
-      case '饮用水': return const Icon(Icons.water_drop);
-      default: return const Icon(Icons.lightbulb);
+      case '饮食':
+        return const Icon(Icons.restaurant);
+      case '生活':
+        return const Icon(Icons.nightlife);
+      case '打印':
+        return const Icon(Icons.print);
+      case '学习':
+        return const Icon(Icons.book);
+      case '快递':
+        return const Icon(Icons.local_shipping);
+      case '超市':
+        return const Icon(Icons.store);
+      case '饮用水':
+        return const Icon(Icons.water_drop);
+      default:
+        return const Icon(Icons.lightbulb);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return ShadowBox(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    toUse.name,
-                    textAlign: TextAlign.left,
-                    textScaleFactor: 1.5,
-                  ),
-                  TagsBoxes(
-                    text: toUse.status ? "开放" : "关闭",
-                    backgroundColor: toUse.status ? Colors.green : Colors.red,
-                  )
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  _iconForTarget(),
-                  const SizedBox(width: 5),
-                  for (var i in toUse.tags)
-                    Row(
-                      children: [
-                        TagsBoxes(
-                          text: i,
-                        ),
-                        const SizedBox(width: 4)
-                      ],
-                    )
-
-                ],
-              ),
-              const Divider(height: 15.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Text(
-                  toUse.description == null ? "没有描述" : toUse.description!,
-                  textScaleFactor: 1.10,
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  toUse.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.left,
+                  textScaleFactor: 1.25,
                 ),
+                TagsBoxes(
+                  text: toUse.status ? "开放" : "关闭",
+                  backgroundColor: toUse.status ? Colors.green : Colors.red,
+                )
+              ],
+            ),
+            Row(
+              children: [
+                _iconForTarget(),
+                const SizedBox(width: 5),
+                for (var i in toUse.tags)
+                  Row(
+                    children: [
+                      TagsBoxes(
+                        text: i,
+                      ),
+                      const SizedBox(width: 4)
+                    ],
+                  )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(2.5, 0, 0, 0),
+              child: Text(
+                toUse.description ?? "没有描述",
+                maxLines: 1,
+                overflow: TextOverflow.fade,
               ),
-              const Divider(height: 15.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  /*
-                  TextButton(
-                    // To be implemented.
-                    onPressed: () {},
-                    child: const Text("纠正"),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("${toUse.name}的描述"),
+                      content: Text(
+                        toUse.description ?? "没有描述",
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text("确定"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  */
-                  Text(
-                      "上次更新在 ${toUse.updatedAt.toLocal().toString().substring(0, 19)}"
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ));
+                  child: const Text("详情"),
+                ),
+                /*
+                    TextButton(
+                      // To be implemented.
+                      onPressed: () {},
+                      child: const Text("纠正"),
+                    ),
+                    */
+                Text(
+                    "上次更新在 ${toUse.updatedAt.toLocal().toString().substring(0, 19)}"),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

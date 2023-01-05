@@ -50,26 +50,24 @@ class TabForXDDir extends StatelessWidget {
                 showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('关于西电目录'),
-                      content: const Text(
-                        "This Flutter frontend, \nCopyright 2022 SuperBart.\n"
-                        "\nOriginal React/Chakra-UI frontend, \nCopyright 2022 hawa130.\n"
-                        "\nData used with permission from \nXidian Directory Development Group.\n"
-                        "\nBender have shiny metal ass which should not be bitten.\n",
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text("确定"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    ));
+                          title: const Text('关于西电目录'),
+                          content: const Text(
+                            "This Flutter frontend. \nCopyright 2022 SuperBart.\n"
+                            "\nOriginal React/Chakra-UI frontend, \nCopyright 2022 hawa130.\n"
+                            "\nData used with permission from \nXidian Directory Development Group.\n"
+                            "\nThis is a practise project for the Flutter Web.\n",
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text("确定"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ));
               },
-
             ),
-
           ],
           bottom: const TabBar(
             tabs: [
