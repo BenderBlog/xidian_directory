@@ -22,8 +22,8 @@ if you want to use.
 import 'package:flutter/material.dart';
 import 'package:xidian_directory/weight.dart';
 import 'package:xidian_directory/SliverGridDelegateWithFixedHeight.dart';
-import 'package:xidian_directory/data/shop_information_entity.dart';
-import 'package:xidian_directory/communicate/XidianDirectorySession.dart';
+import 'package:xidian_directory/model/shop_information_entity.dart';
+import 'package:xidian_directory/repository/session.dart';
 
 class ComprehensiveWindow extends StatefulWidget {
   const ComprehensiveWindow({Key? key}) : super(key: key);
@@ -38,7 +38,6 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.width);
     return Column(
       children: [
         Container(

@@ -20,7 +20,7 @@ if you want to use.
 */
 
 import 'package:flutter/material.dart';
-import 'package:xidian_directory/ui/HomePage.dart';
+import 'package:xidian_directory/page/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: const XidianDirWindow(),
+      home: const XidianDir(),
     );
   }
 }

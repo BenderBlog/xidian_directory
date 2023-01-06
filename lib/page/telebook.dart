@@ -18,11 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Please refer to ADDITIONAL TERMS APPLIED TO XIDIAN_DIRECTORY SOURCE CODE
 if you want to use.
 */
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:xidian_directory/weight.dart';
-import 'package:xidian_directory/data/telephone.dart';
-import 'package:xidian_directory/communicate/XidianDirectorySession.dart';
-
+import 'package:xidian_directory/model/telephone.dart';
+import 'package:xidian_directory/repository/session.dart';
 
 /// Intro of the telephone book (address book if you want).
 class TeleBookWindow extends StatelessWidget {
@@ -52,7 +53,6 @@ class TeleBookWindow extends StatelessWidget {
       ),
     );
   }
-
 }
 
 /// Each entry of the telephone book is shown in a card,
@@ -61,14 +61,20 @@ class DepartmentWindow extends StatelessWidget {
   final TeleyInformation toUse;
   final List<Widget> mainCourse = [];
 
+  double white(context) => MediaQuery.of(context).size.width > 900
+      ? MediaQuery.of(context).size.width * 0.125
+      : 12.5;
+
   DepartmentWindow({Key? key, required this.toUse}) : super(key: key) {
-    mainCourse.add(
+    mainCourse.addAll([
       Text(
         toUse.title,
         textAlign: TextAlign.left,
         textScaleFactor: 1.4,
       ),
-    );
+      const Divider(),
+    ]);
+
     if (toUse.isNorth == true) {
       mainCourse.add(const SizedBox(height: 5));
       mainCourse.add(InsideWindow(
@@ -79,17 +85,16 @@ class DepartmentWindow extends StatelessWidget {
     if (toUse.isSouth == true) {
       mainCourse.add(const SizedBox(height: 5));
       mainCourse.add(InsideWindow(
-          address: toUse.southAddress,
-          phone: toUse.southTeley,
-          isSouth: true));
+          address: toUse.southAddress, phone: toUse.southTeley, isSouth: true));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return ShadowBox(
+      margin: EdgeInsets.symmetric(horizontal: white(context), vertical: 12.5),
       child: Container(
-        padding: const EdgeInsets.all(17.5),
+        padding: const EdgeInsets.all(12.5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: mainCourse,
@@ -115,30 +120,42 @@ class InsideWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        isSouth ? "南校区" : "北校区",
-        textAlign: TextAlign.left,
-        textScaleFactor: 1.00,
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Color.fromARGB(255, 237, 242, 247),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
-      if (address != null)
-        Row(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
           children: [
-            const SizedBox(width: 10),
-            const Icon(Icons.house),
-            const SizedBox(width: 5),
-            Text(address!)
+            Text(
+              isSouth ? "南校区" : "北校区",
+              textAlign: TextAlign.left,
+              textScaleFactor: 1.00,
+            ),
+            if (address != null)
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  const Icon(Icons.house),
+                  const SizedBox(width: 5),
+                  Text(address!)
+                ],
+              ),
+            if (phone != null) const Spacer(),
+            if (phone != null)
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  const Icon(Icons.phone),
+                  const SizedBox(width: 5),
+                  Text(phone!)
+                ],
+              )
           ],
         ),
-      if (phone != null)
-        Row(
-          children: [
-            const SizedBox(width: 10),
-            const Icon(Icons.phone),
-            const SizedBox(width: 5),
-            Text(phone!)
-          ],
-        )
-    ]);
+      ),
+    );
   }
 }

@@ -23,9 +23,9 @@ if you want to use.
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:crypto/crypto.dart';
-import 'package:xidian_directory/data/shop_information_entity.dart';
-import 'package:xidian_directory/data/cafeteria_window_item_entity.dart';
-import 'package:xidian_directory/data/telephone.dart';
+import 'package:xidian_directory/model/shop_information_entity.dart';
+import 'package:xidian_directory/model/cafeteria_window_item_entity.dart';
+import 'package:xidian_directory/model/telephone.dart';
 
 class XidianDirectorySession {
   final String _apiKey = 'ya0UhH6yzo8nKmWyrHfkLEyb';

@@ -24,8 +24,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:xidian_directory/SliverGridDelegateWithFixedHeight.dart';
 import 'package:xidian_directory/weight.dart';
-import 'package:xidian_directory/data/cafeteria_window_item_entity.dart';
-import 'package:xidian_directory/communicate/XidianDirectorySession.dart';
+import 'package:xidian_directory/model/cafeteria_window_item_entity.dart';
+import 'package:xidian_directory/repository/session.dart';
 
 class DiningHallWindow extends StatefulWidget {
   const DiningHallWindow({Key? key}) : super(key: key);
