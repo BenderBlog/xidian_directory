@@ -19,8 +19,6 @@ Please refer to ADDITIONAL TERMS APPLIED TO XIDIAN_DIRECTORY SOURCE CODE
 if you want to use.
 */
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:xidian_directory/SliverGridDelegateWithFixedHeight.dart';
 import 'package:xidian_directory/weight.dart';
@@ -35,8 +33,43 @@ class DiningHallWindow extends StatefulWidget {
 }
 
 class _DiningHallWindowState extends State<DiningHallWindow> {
-  String toSearch = "";
   String goToWhere = "竹园一楼";
+  TextEditingController toSearch = TextEditingController();
+  List<WindowInformation>? toUse;
+
+  void loadData() async {
+    toUse = await getCafeteriaData(
+        toFind: "", where: goToWhere, isForceUpdate: true);
+    setState(() {});
+  }
+
+  void search(String toSearch) {
+    setState(() {
+      toUse = null;
+    });
+    getCafeteriaData(where: goToWhere, toFind: toSearch).then((value) {
+      toUse = value;
+      setState(() {});
+    });
+  }
+
+  void changeGoToWhere(String? input) {
+    setState(() {
+      toUse = null;
+      goToWhere = input ?? "竹园一楼";
+    });
+    getCafeteriaData(where: goToWhere, toFind: toSearch.text).then((value) {
+      toUse = value;
+      setState(() {});
+    });
+  }
+
+  @override
+  void initState() {
+    loadData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -61,12 +94,7 @@ class _DiningHallWindowState extends State<DiningHallWindow> {
                     hintText: "在此搜索",
                     prefixIcon: Icon(Icons.search),
                   ),
-                  onChanged: (String text) {
-                    setState(() {
-                      toSearch = text;
-                      _get(false);
-                    });
-                  },
+                  onChanged: search,
                 ),
               ),
             ),
@@ -84,132 +112,131 @@ class _DiningHallWindowState extends State<DiningHallWindow> {
                   for (var i in categories)
                     DropdownMenuItem(value: i, child: Text(i))
                 ],
-                onChanged: (String? value) {
-                  setState(
-                    () {
-                      goToWhere = value!;
-                      _get(false);
-                    },
-                  );
-                },
+                onChanged: changeGoToWhere,
               ),
             )
           ],
         ),
       ),
-      Expanded(
-        child: Container(
-          constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width > 1280
-                  ? MediaQuery.of(context).size.width * 0.8
-                  : MediaQuery.of(context).size.width),
-          child: RefreshIndicator(
-            onRefresh: () async => _get(true),
-            child: FutureBuilder<List<WindowInformation>>(
-              future: _get(false),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    return Center(
-                        child:
-                            Text("坏事: ${snapshot.error} + ${snapshot.data}"));
-                  } else {
-                    return ListView(
-                      children: [
-                        for (var i in snapshot.data) CafeteriaCard(toUse: i),
-                      ],
-                    );
-                  }
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
-          ),
-        ),
-      )
+      _list(toUse)
     ]);
   }
 
-  Future<List<WindowInformation>> _get(bool isForceUpdate) async =>
-      getCafeteriaData(
-          toFind: toSearch, where: goToWhere, isForceUpdate: isForceUpdate);
+  Widget _list(List<WindowInformation>? toUse) {
+    if (toUse != null) {
+      if (toUse.isNotEmpty) {
+        return Expanded(
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return ListView(
+                children: [
+                  for (var i in toUse)
+                    CafeteriaCard(
+                      toUse: i,
+                      white: constraints.maxWidth < 900
+                          ? 12.5
+                          : constraints.maxWidth * 0.1,
+                    ),
+                ],
+              );
+            },
+          ),
+        );
+      } else {
+        return Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [Icon(Icons.info), Text("没有结果，请检查参数")],
+            ),
+          ),
+        );
+      }
+    } else {
+      return const Expanded(child: Center(child: CircularProgressIndicator()));
+    }
+  }
 }
 
 class CafeteriaCard extends StatelessWidget {
   final WindowInformation toUse;
+  final double white;
 
-  const CafeteriaCard({Key? key, required this.toUse}) : super(key: key);
+  const CafeteriaCard({Key? key, required this.toUse, required this.white})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ShadowBox(
+        margin: EdgeInsets.symmetric(horizontal: white, vertical: 12.5),
         child: Container(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          padding: const EdgeInsets.all(20),
+          child: Column(
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                if (toUse.number != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                    if (toUse.number != null)
+                      Row(
+                        children: [
+                          TagsBoxes(
+                            text: toUse.number.toString(),
+                            backgroundColor: Colors.grey,
+                          ),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
+                    SizedBox(
+                      width: 150,
+                      child: Text(
+                        toUse.name,
+                        textAlign: TextAlign.left,
+                        textScaleFactor: 1.5,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                      ),
+                    )
+                  ]),
                   Row(
                     children: [
                       TagsBoxes(
-                        text: toUse.number.toString(),
-                        backgroundColor: Colors.grey,
+                          text: toUse.places,
+                          backgroundColor: Colors.deepPurple),
+                      const SizedBox(width: 5),
+                      TagsBoxes(
+                        text: toUse.state() ? "开放" : "关门",
+                        backgroundColor:
+                            toUse.state() ? Colors.green : Colors.red,
                       ),
-                      const SizedBox(width: 10),
                     ],
-                  ),
-                SizedBox(
-                  width: 150,
-                  child: Text(
-                    toUse.name,
-                    textAlign: TextAlign.left,
-                    textScaleFactor: 1.5,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: true,
-                  ),
-                )
-              ]),
-              Row(
-                children: [
-                  TagsBoxes(
-                      text: toUse.places, backgroundColor: Colors.deepPurple),
-                  const SizedBox(width: 5),
-                  TagsBoxes(
-                    text: toUse.state() ? "开放" : "关门",
-                    backgroundColor: toUse.state() ? Colors.green : Colors.red,
                   ),
                 ],
               ),
+              if (toUse.commit != null)
+                Row(
+                  children: [
+                    const SizedBox(height: 5),
+                    Flexible(
+                      child: Text("${toUse.commit}"),
+                    )
+                  ],
+                ),
+              const Divider(height: 28.0),
+              GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedHeight(
+                    maxCrossAxisExtent: 375,
+                    height: 70,
+                    mainAxisSpacing: 15.0,
+                    crossAxisSpacing: 15.0),
+                itemCount: toUse.items.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) =>
+                    ItemBox(toUse: toUse.items.elementAt(index)),
+              ),
             ],
           ),
-          if (toUse.commit != null)
-            Row(
-              children: [
-                const SizedBox(height: 5),
-                Flexible(
-                  child: Text("${toUse.commit}"),
-                )
-              ],
-            ),
-          const Divider(height: 28.0),
-          GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedHeight(
-                maxCrossAxisExtent: 375,
-                height: 70,
-                mainAxisSpacing: 15.0,
-                crossAxisSpacing: 15.0),
-            itemCount: toUse.items.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) =>
-                ItemBox(toUse: toUse.items.elementAt(index)),
-          ),
-        ],
-      ),
-    ));
+        ));
   }
 }
 

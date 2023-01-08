@@ -34,7 +34,41 @@ class ComprehensiveWindow extends StatefulWidget {
 
 class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
   String categoryToSent = "所有";
-  String toSearch = "";
+  TextEditingController toSearch = TextEditingController();
+  ShopInformationEntity? toUse;
+
+  void loadData() async {
+    toUse = await getShopData(
+        category: categoryToSent, toFind: "", isForceUpdate: true);
+    setState(() {});
+  }
+
+  void search(String toSearch) {
+    setState(() {
+      toUse = null;
+    });
+    getShopData(category: categoryToSent, toFind: toSearch).then((value) {
+      toUse = value;
+      setState(() {});
+    });
+  }
+
+  void changeCategory(String? newCategory) {
+    setState(() {
+      toUse = null;
+      categoryToSent = newCategory ?? "所有";
+    });
+    getShopData(category: categoryToSent, toFind: toSearch.text).then((value) {
+      toUse = value;
+      setState(() {});
+    });
+  }
+
+  @override
+  void initState() {
+    loadData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,17 +90,13 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10),
-                  child: TextField(
+                  child: TextFormField(
+                    controller: toSearch,
                     decoration: const InputDecoration(
                       hintText: "在此搜索",
                       prefixIcon: Icon(Icons.search),
                     ),
-                    onChanged: (String text) {
-                      setState(() {
-                        toSearch = text;
-                        _get(false);
-                      });
-                    },
+                    onChanged: search,
                   ),
                 ),
               ),
@@ -84,58 +114,56 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
                     for (var i in categories)
                       DropdownMenuItem(value: i, child: Text(i))
                   ],
-                  onChanged: (String? value) {
-                    setState(
-                      () {
-                        categoryToSent = value!;
-                        _get(false);
-                      },
-                    );
-                  },
+                  onChanged: changeCategory,
                 ),
-              )
+              ),
             ],
           ),
         ),
-        Expanded(
-          child: Container(
-            // White edge on the left & right.
-            constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width > 1280
-                    ? MediaQuery.of(context).size.width * 0.8
-                    : MediaQuery.of(context).size.width),
-            child: RefreshIndicator(
-              onRefresh: () async => _get(true),
-              child: FutureBuilder<ShopInformationEntity>(
-                future: _get(false),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) {
-                      return Center(child: Text("坏事: ${snapshot.error}"));
-                    } else {
-                      return GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedHeight(
-                            maxCrossAxisExtent: 324, height: 200),
-                        itemCount: snapshot.data.results.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) =>
-                            ShopCard(toUse: snapshot.data.results[index]),
-                      );
-                    }
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
-            ),
-          ),
-        ),
+        _list(toUse)
       ],
     );
   }
 
-  Future<ShopInformationEntity> _get(bool isForceUpdate) async => getShopData(
-      category: categoryToSent, toFind: toSearch, isForceUpdate: isForceUpdate);
+  Widget _list(ShopInformationEntity? toUse) {
+    if (toUse != null) {
+      if (toUse.results.isNotEmpty) {
+        return Expanded(
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return Container(
+                // White edge on the left & right.
+                constraints: BoxConstraints(
+                  maxWidth: constraints.maxWidth < 900
+                      ? constraints.maxWidth
+                      : constraints.maxWidth * 0.9,
+                ),
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedHeight(
+                      maxCrossAxisExtent: 324, height: 200),
+                  itemCount: toUse.results.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) =>
+                      ShopCard(toUse: toUse.results[index]),
+                ),
+              );
+            },
+          ),
+        );
+      } else {
+        return Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [Icon(Icons.info), Text("没有结果，请检查参数")],
+            ),
+          ),
+        );
+      }
+    } else {
+      return const Expanded(child: Center(child: CircularProgressIndicator()));
+    }
+  }
 }
 
 class ShopCard extends StatelessWidget {

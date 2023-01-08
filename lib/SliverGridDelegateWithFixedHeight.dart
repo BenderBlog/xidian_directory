@@ -43,7 +43,6 @@ class SliverGridDelegateWithFixedHeight extends SliverGridDelegate {
       constraints.crossAxisExtent - crossAxisSpacing * (crossAxisCount - 1),
     );
     final double childCrossAxisExtent = usableCrossAxisExtent / crossAxisCount;
-    print("$crossAxisCount $usableCrossAxisExtent $childCrossAxisExtent");
     // Focus to use the height.
     final double childMainAxisExtent = height;
     return SliverGridRegularTileLayout(

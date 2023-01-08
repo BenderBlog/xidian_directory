@@ -20,11 +20,10 @@ if you want to use.
 */
 
 import 'package:flutter/material.dart';
+import 'package:xidian_directory/weight.dart';
 import 'package:xidian_directory/page/comprehensive.dart';
 import 'package:xidian_directory/page/dininghall.dart';
 import 'package:xidian_directory/page/telebook.dart';
-
-bool isDesktop(context) => MediaQuery.of(context).size.width > 1000;
 
 class XidianDir extends StatefulWidget {
   const XidianDir({super.key});
@@ -36,55 +35,15 @@ class XidianDir extends StatefulWidget {
 class _XidianDirState extends State<XidianDir> {
   Widget toShow = const ComprehensiveWindow();
 
+  void changePage(Widget newPage) => setState(() {
+        toShow = newPage;
+      });
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        if (isDesktop(context))
-          Drawer(
-            child: SafeArea(
-              child: ListView(
-                // Important: Remove any padding from the ListView.
-                padding: EdgeInsets.zero,
-                children: [
-                  const ListTile(
-                    title: SelectableText(
-                      "西电目录 Flutter 网页版",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.store_mall_directory),
-                    title: const Text('综合楼'),
-                    onTap: () {
-                      setState(() {
-                        toShow = const ComprehensiveWindow();
-                      });
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.restaurant),
-                    title: const Text('食堂'),
-                    onTap: () {
-                      setState(() {
-                        toShow = const DiningHallWindow();
-                      });
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.phone),
-                    title: const Text('电话本'),
-                    onTap: () {
-                      setState(() {
-                        toShow = const TeleBookWindow();
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
+        if (isDesktop(context)) ListDrawer(mainPageCallback: changePage),
         const VerticalDivider(width: 1),
         Expanded(
           child: Scaffold(
@@ -93,53 +52,7 @@ class _XidianDirState extends State<XidianDir> {
               title: const Text("西电目录 Flutter 网页版"),
             ),
             body: SafeArea(child: toShow),
-            drawer: Drawer(
-              child: SafeArea(
-                child: ListView(
-                  // Important: Remove any padding from the ListView.
-                  padding: EdgeInsets.zero,
-                  children: [
-                    const ListTile(
-                      title: SelectableText(
-                        "西电目录 Flutter 网页版",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      leading: const Icon(Icons.store_mall_directory),
-                      title: const Text('综合楼'),
-                      onTap: () {
-                        setState(() {
-                          toShow = const ComprehensiveWindow();
-                        });
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.restaurant),
-                      title: const Text('食堂'),
-                      onTap: () {
-                        setState(() {
-                          toShow = const DiningHallWindow();
-                        });
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.phone),
-                      title: const Text('电话本'),
-                      onTap: () {
-                        setState(() {
-                          toShow = const TeleBookWindow();
-                        });
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            drawer: ListDrawer(mainPageCallback: changePage),
           ),
         ),
       ],
@@ -147,16 +60,49 @@ class _XidianDirState extends State<XidianDir> {
   }
 }
 
-class ListDrawer extends StatefulWidget {
-  const ListDrawer({super.key});
+class ListDrawer extends StatelessWidget {
+  final ValueChanged<Widget> mainPageCallback;
+  const ListDrawer({super.key, required this.mainPageCallback});
 
-  @override
-  State<ListDrawer> createState() => _ListDrawerState();
-}
-
-class _ListDrawerState extends State<ListDrawer> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Drawer(
+      child: SafeArea(
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            const ListTile(
+              title: SelectableText(
+                "西电目录 Flutter 网页版",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.store_mall_directory),
+              title: const Text('综合楼'),
+              onTap: () {
+                mainPageCallback(const ComprehensiveWindow());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.restaurant),
+              title: const Text('食堂'),
+              onTap: () {
+                mainPageCallback(const DiningHallWindow());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.phone),
+              title: const Text('电话本'),
+              onTap: () {
+                mainPageCallback(TeleBookWindow());
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

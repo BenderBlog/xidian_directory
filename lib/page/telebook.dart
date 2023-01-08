@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Please refer to ADDITIONAL TERMS APPLIED TO XIDIAN_DIRECTORY SOURCE CODE
 if you want to use.
 */
-import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:xidian_directory/weight.dart';
@@ -27,31 +26,42 @@ import 'package:xidian_directory/repository/session.dart';
 
 /// Intro of the telephone book (address book if you want).
 class TeleBookWindow extends StatelessWidget {
-  const TeleBookWindow({Key? key}) : super(key: key);
+  // History, this was from a website, but he let it offline...
+  final Future<List<TeleyInformation>> _getCache = getTelephoneData(false);
+
+  TeleBookWindow({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async => getTelephoneData(true),
-      child: FutureBuilder<List<TeleyInformation>>(
-        future: getTelephoneData(false),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              return Center(child: Text("坏事: ${snapshot.error}"));
-            } else {
-              return ListView(
-                children: [
-                  for (var i in snapshot.data) DepartmentWindow(toUse: i),
-                ],
-              );
-            }
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-    );
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) =>
+            RefreshIndicator(
+              onRefresh: () async => getTelephoneData(true),
+              child: FutureBuilder<List<TeleyInformation>>(
+                future: _getCache,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text("坏事: ${snapshot.error}"));
+                    } else {
+                      return ListView(
+                        children: [
+                          for (var i in snapshot.data)
+                            DepartmentWindow(
+                              toUse: i,
+                              white: constraints.maxWidth < 900
+                                  ? 12.5
+                                  : constraints.maxWidth * 0.1,
+                            ),
+                        ],
+                      );
+                    }
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            ));
   }
 }
 
@@ -59,13 +69,11 @@ class TeleBookWindow extends StatelessWidget {
 /// which stored in an information class called [TeleyInformation].
 class DepartmentWindow extends StatelessWidget {
   final TeleyInformation toUse;
+  final double white;
   final List<Widget> mainCourse = [];
 
-  double white(context) => MediaQuery.of(context).size.width > 900
-      ? MediaQuery.of(context).size.width * 0.125
-      : 12.5;
-
-  DepartmentWindow({Key? key, required this.toUse}) : super(key: key) {
+  DepartmentWindow({Key? key, required this.toUse, required this.white})
+      : super(key: key) {
     mainCourse.addAll([
       Text(
         toUse.title,
@@ -92,7 +100,7 @@ class DepartmentWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ShadowBox(
-      margin: EdgeInsets.symmetric(horizontal: white(context), vertical: 12.5),
+      margin: EdgeInsets.symmetric(horizontal: white, vertical: 12.5),
       child: Container(
         padding: const EdgeInsets.all(12.5),
         child: Column(

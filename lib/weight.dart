@@ -21,6 +21,8 @@ if you want to use.
 
 import 'package:flutter/material.dart';
 
+bool isDesktop(context) => MediaQuery.of(context).size.width > 1000;
+
 /// Use it as the larger boxes.
 class ShadowBox extends StatelessWidget {
   final Widget child;
