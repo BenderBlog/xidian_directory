@@ -20,6 +20,7 @@ if you want to use.
 */
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:xidian_directory/weight.dart';
 import 'package:xidian_directory/page/comprehensive.dart';
 import 'package:xidian_directory/page/dininghall.dart';
@@ -50,23 +51,21 @@ class _XidianDirState extends State<XidianDir> {
         if (!isDesktop(context)) Navigator.of(context).pop();
       });
 
-  Widget about(context) => AlertDialog(
-        title: const Text('关于西电目录'),
-        content: const Text(
-          "This Flutter frontend, \nCopyright 2022 SuperBart.\n"
-          "\nOriginal React/Chakra-UI frontend, \nCopyright 2022 hawa130.\n"
-          "\nData used with permission from \nXidian Directory Development Group.\n"
-          "\nBender have shiny metal ass which should not be bitten.\n",
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text("确定"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
+  var buttons = [
+    IconButton(
+      icon: const Icon(Icons.home),
+      onPressed: () => launchUrl(Uri.parse('https://legacy.superbart.xyz')),
+    ),
+    IconButton(
+      icon: const Icon(Icons.code),
+      onPressed: () => launchUrl(
+          Uri.parse('https://github.com/BenderBlog/xidian_directory')),
+    ),
+    IconButton(
+      icon: const Icon(Icons.info),
+      onPressed: () => launchUrl(Uri.parse('https://ncov.hawa130.com/about')),
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -79,17 +78,7 @@ class _XidianDirState extends State<XidianDir> {
             child: Scaffold(
               appBar: AppBar(
                 title: Text(current),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.info),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: about,
-                      );
-                    },
-                  ),
-                ],
+                actions: buttons,
               ),
               body: SafeArea(child: toShow),
             ),
@@ -100,17 +89,7 @@ class _XidianDirState extends State<XidianDir> {
       return Scaffold(
         appBar: AppBar(
           title: Text(current),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.info),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: about,
-                );
-              },
-            ),
-          ],
+          actions: buttons,
         ),
         body: SafeArea(child: toShow),
         drawer: ListDrawer(mainPageCallback: changePage),
