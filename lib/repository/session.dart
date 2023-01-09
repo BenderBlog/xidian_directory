@@ -140,7 +140,8 @@ Future<List<WindowInformation>> getCafeteriaData(
   return toReturn;
 }
 
-Future<List<TeleyInformation>> getTelephoneData(bool isForceUpdate) async {
+// History, this was from a website, but he let it offline...
+List<TeleyInformation> getTelephoneData() {
   List<TeleyInformation> toReturn = [];
   var result = json.decode('''
 [

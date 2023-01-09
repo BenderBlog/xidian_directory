@@ -32,13 +32,13 @@ class DiningHallWindow extends StatefulWidget {
   State<DiningHallWindow> createState() => _DiningHallWindowState();
 }
 
-class _DiningHallWindowState extends State<DiningHallWindow> {
-  String goToWhere = "竹园一楼";
-  TextEditingController toSearch = TextEditingController();
-  List<WindowInformation>? toUse;
+String goToWhere = "竹园一楼";
+TextEditingController toSearch = TextEditingController();
+List<WindowInformation>? toUse;
 
+class _DiningHallWindowState extends State<DiningHallWindow> {
   void loadData() async {
-    toUse = await getCafeteriaData(
+    toUse ??= await getCafeteriaData(
         toFind: "", where: goToWhere, isForceUpdate: true);
     if (mounted) {
       setState(() {});
@@ -90,6 +90,7 @@ class _DiningHallWindowState extends State<DiningHallWindow> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: TextField(
+                  controller: toSearch,
                   decoration: const InputDecoration(
                     hintText: "在此搜索",
                     prefixIcon: Icon(Icons.search),

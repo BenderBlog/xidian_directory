@@ -26,42 +26,26 @@ import 'package:xidian_directory/repository/session.dart';
 
 /// Intro of the telephone book (address book if you want).
 class TeleBookWindow extends StatelessWidget {
-  // History, this was from a website, but he let it offline...
-  final Future<List<TeleyInformation>> _getCache = getTelephoneData(false);
-
   TeleBookWindow({Key? key}) : super(key: key);
+
+  // History, this was from a website, but he let it offline...
+  final List<TeleyInformation> _getCache = getTelephoneData();
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) =>
-            RefreshIndicator(
-              onRefresh: () async => getTelephoneData(true),
-              child: FutureBuilder<List<TeleyInformation>>(
-                future: _getCache,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) {
-                      return Center(child: Text("坏事: ${snapshot.error}"));
-                    } else {
-                      return ListView(
-                        children: [
-                          for (var i in snapshot.data)
-                            DepartmentWindow(
-                              toUse: i,
-                              white: constraints.maxWidth < 900
-                                  ? 12.5
-                                  : constraints.maxWidth * 0.1,
-                            ),
-                        ],
-                      );
-                    }
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
-            ));
+      builder: (BuildContext context, BoxConstraints constraints) => ListView(
+        children: [
+          for (var i in _getCache)
+            DepartmentWindow(
+              toUse: i,
+              white: constraints.maxWidth < 900
+                  ? 12.5
+                  : constraints.maxWidth * 0.1,
+            ),
+        ],
+      ),
+    );
   }
 }
 

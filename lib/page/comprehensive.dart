@@ -32,13 +32,13 @@ class ComprehensiveWindow extends StatefulWidget {
   State<ComprehensiveWindow> createState() => _ComprehensiveWindowState();
 }
 
-class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
-  String categoryToSent = "所有";
-  TextEditingController toSearch = TextEditingController();
-  ShopInformationEntity? toUse;
+String categoryToSent = "所有";
+TextEditingController toSearch = TextEditingController();
+ShopInformationEntity? toUse;
 
+class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
   void loadData() async {
-    toUse = await getShopData(
+    toUse ??= await getShopData(
         category: categoryToSent, toFind: "", isForceUpdate: true);
     if (mounted) {
       setState(() {});
