@@ -70,33 +70,52 @@ class _XidianDirState extends State<XidianDir> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (isDesktop(context)) ListDrawer(mainPageCallback: changePage),
-        if (isDesktop(context)) const VerticalDivider(width: 1),
-        Expanded(
-          child: Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: !isDesktop(context),
-              title: Text(current),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.info),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: about,
-                    );
-                  },
-                ),
-              ],
+    if (isDesktop(context)) {
+      return Row(
+        children: [
+          ListDrawer(mainPageCallback: changePage),
+          const VerticalDivider(width: 1),
+          Expanded(
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(current),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.info),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: about,
+                      );
+                    },
+                  ),
+                ],
+              ),
+              body: SafeArea(child: toShow),
             ),
-            body: SafeArea(child: toShow),
-            drawer: ListDrawer(mainPageCallback: changePage),
           ),
+        ],
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(current),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.info),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: about,
+                );
+              },
+            ),
+          ],
         ),
-      ],
-    );
+        body: SafeArea(child: toShow),
+        drawer: ListDrawer(mainPageCallback: changePage),
+      );
+    }
   }
 }
 
