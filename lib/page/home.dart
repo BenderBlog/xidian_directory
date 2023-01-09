@@ -50,6 +50,24 @@ class _XidianDirState extends State<XidianDir> {
         if (!isDesktop(context)) Navigator.of(context).pop();
       });
 
+  Widget about(context) => AlertDialog(
+        title: const Text('关于西电目录'),
+        content: const Text(
+          "This Flutter frontend, \nCopyright 2022 SuperBart.\n"
+          "\nOriginal React/Chakra-UI frontend, \nCopyright 2022 hawa130.\n"
+          "\nData used with permission from \nXidian Directory Development Group.\n"
+          "\nBender have shiny metal ass which should not be bitten.\n",
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("确定"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -67,23 +85,7 @@ class _XidianDirState extends State<XidianDir> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('关于西电目录'),
-                        content: const Text(
-                          "This Flutter frontend, \nCopyright 2022 SuperBart.\n"
-                          "\nOriginal React/Chakra-UI frontend, \nCopyright 2022 hawa130.\n"
-                          "\nData used with permission from \nXidian Directory Development Group.\n"
-                          "\nBender have shiny metal ass which should not be bitten.\n",
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Text("确定"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      ),
+                      builder: about,
                     );
                   },
                 ),
