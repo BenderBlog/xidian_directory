@@ -40,28 +40,28 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
   void loadData() async {
     toUse = await getShopData(
         category: categoryToSent, toFind: "", isForceUpdate: true);
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void search(String toSearch) async {
+    toUse = null;
     setState(() {});
+    toUse = await getShopData(category: categoryToSent, toFind: toSearch);
+    if (mounted) {
+      setState(() {});
+    }
   }
 
-  void search(String toSearch) {
-    setState(() {
-      toUse = null;
-    });
-    getShopData(category: categoryToSent, toFind: toSearch).then((value) {
-      toUse = value;
+  void changeCategory(String? newCategory) async {
+    toUse = null;
+    categoryToSent = newCategory ?? "所有";
+    setState(() {});
+    toUse = await getShopData(category: categoryToSent, toFind: toSearch.text);
+    if (mounted) {
       setState(() {});
-    });
-  }
-
-  void changeCategory(String? newCategory) {
-    setState(() {
-      toUse = null;
-      categoryToSent = newCategory ?? "所有";
-    });
-    getShopData(category: categoryToSent, toFind: toSearch.text).then((value) {
-      toUse = value;
-      setState(() {});
-    });
+    }
   }
 
   @override

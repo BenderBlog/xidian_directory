@@ -40,28 +40,28 @@ class _DiningHallWindowState extends State<DiningHallWindow> {
   void loadData() async {
     toUse = await getCafeteriaData(
         toFind: "", where: goToWhere, isForceUpdate: true);
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void search(String toSearch) async {
+    toUse = null;
     setState(() {});
+    toUse = await getCafeteriaData(where: goToWhere, toFind: toSearch);
+    if (mounted) {
+      setState(() {});
+    }
   }
 
-  void search(String toSearch) {
-    setState(() {
-      toUse = null;
-    });
-    getCafeteriaData(where: goToWhere, toFind: toSearch).then((value) {
-      toUse = value;
+  void changeGoToWhere(String? input) async {
+    toUse = null;
+    goToWhere = input ?? "竹园一楼";
+    setState(() {});
+    toUse = await getCafeteriaData(where: goToWhere, toFind: toSearch.text);
+    if (mounted) {
       setState(() {});
-    });
-  }
-
-  void changeGoToWhere(String? input) {
-    setState(() {
-      toUse = null;
-      goToWhere = input ?? "竹园一楼";
-    });
-    getCafeteriaData(where: goToWhere, toFind: toSearch.text).then((value) {
-      toUse = value;
-      setState(() {});
-    });
+    }
   }
 
   @override

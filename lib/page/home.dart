@@ -34,9 +34,20 @@ class XidianDir extends StatefulWidget {
 
 class _XidianDirState extends State<XidianDir> {
   Widget toShow = const ComprehensiveWindow();
+  String current = "综合楼";
 
   void changePage(Widget newPage) => setState(() {
         toShow = newPage;
+        if (toShow.runtimeType == ComprehensiveWindow) {
+          current = "综合楼";
+        }
+        if (toShow.runtimeType == DiningHallWindow) {
+          current = "食堂";
+        }
+        if (toShow.runtimeType == TeleBookWindow) {
+          current = "电话本";
+        }
+        if (!isDesktop(context)) Navigator.of(context).pop();
       });
 
   @override
@@ -44,12 +55,39 @@ class _XidianDirState extends State<XidianDir> {
     return Row(
       children: [
         if (isDesktop(context)) ListDrawer(mainPageCallback: changePage),
-        const VerticalDivider(width: 1),
+        if (isDesktop(context)) const VerticalDivider(width: 1),
         Expanded(
           child: Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: !isDesktop(context),
-              title: const Text("西电目录 Flutter 网页版"),
+              title: Text(current),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.info),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('关于西电目录'),
+                        content: const Text(
+                          "This Flutter frontend, \nCopyright 2022 SuperBart.\n"
+                          "\nOriginal React/Chakra-UI frontend, \nCopyright 2022 hawa130.\n"
+                          "\nData used with permission from \nXidian Directory Development Group.\n"
+                          "\nBender have shiny metal ass which should not be bitten.\n",
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text("确定"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             body: SafeArea(child: toShow),
             drawer: ListDrawer(mainPageCallback: changePage),
@@ -69,8 +107,6 @@ class ListDrawer extends StatelessWidget {
     return Drawer(
       child: SafeArea(
         child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
           children: [
             const ListTile(
               title: SelectableText(
