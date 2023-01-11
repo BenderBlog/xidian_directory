@@ -46,8 +46,9 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
   }
 
   void search(String toSearch) async {
-    toUse = null;
-    setState(() {});
+    setState(() {
+      toUse = null;
+    });
     toUse = await getShopData(category: categoryToSent, toFind: toSearch);
     if (mounted) {
       setState(() {});
@@ -55,9 +56,10 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
   }
 
   void changeCategory(String? newCategory) async {
-    toUse = null;
-    categoryToSent = newCategory ?? "所有";
-    setState(() {});
+    setState(() {
+      toUse = null;
+      categoryToSent = newCategory ?? "所有";
+    });
     toUse = await getShopData(category: categoryToSent, toFind: toSearch.text);
     if (mounted) {
       setState(() {});
@@ -131,21 +133,19 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
         return Expanded(
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              return Container(
-                // White edge on the left & right.
-                constraints: BoxConstraints(
-                  maxWidth: constraints.maxWidth < 900
-                      ? constraints.maxWidth
-                      : constraints.maxWidth * 0.9,
+              return GridView.builder(
+                padding: EdgeInsets.symmetric(
+                  horizontal: constraints.maxWidth < 900
+                      ? 12.5
+                      : constraints.maxWidth * 0.05,
+                  vertical: 0.0,
                 ),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedHeight(
-                      maxCrossAxisExtent: 324, height: 200),
-                  itemCount: toUse.results.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) =>
-                      ShopCard(toUse: toUse.results[index]),
-                ),
+                gridDelegate: SliverGridDelegateWithFixedHeight(
+                    maxCrossAxisExtent: 324, height: 200),
+                itemCount: toUse.results.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) =>
+                    ShopCard(toUse: toUse.results[index]),
               );
             },
           ),

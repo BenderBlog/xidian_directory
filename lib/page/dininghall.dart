@@ -130,14 +130,14 @@ class _DiningHallWindowState extends State<DiningHallWindow> {
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return ListView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: constraints.maxWidth < 900
+                      ? 12.5
+                      : constraints.maxWidth * 0.05,
+                  vertical: 0.0,
+                ),
                 children: [
-                  for (var i in toUse)
-                    CafeteriaCard(
-                      toUse: i,
-                      white: constraints.maxWidth < 900
-                          ? 12.5
-                          : constraints.maxWidth * 0.1,
-                    ),
+                  for (var i in toUse) CafeteriaCard(toUse: i),
                 ],
               );
             },
@@ -161,83 +161,78 @@ class _DiningHallWindowState extends State<DiningHallWindow> {
 
 class CafeteriaCard extends StatelessWidget {
   final WindowInformation toUse;
-  final double white;
 
-  const CafeteriaCard({Key? key, required this.toUse, required this.white})
-      : super(key: key);
+  const CafeteriaCard({Key? key, required this.toUse}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ShadowBox(
-        margin: EdgeInsets.symmetric(horizontal: white, vertical: 12.5),
         child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                    if (toUse.number != null)
-                      Row(
-                        children: [
-                          TagsBoxes(
-                            text: toUse.number.toString(),
-                            backgroundColor: Colors.grey,
-                          ),
-                          const SizedBox(width: 10),
-                        ],
-                      ),
-                    SizedBox(
-                      width: 150,
-                      child: Text(
-                        toUse.name,
-                        textAlign: TextAlign.left,
-                        textScaleFactor: 1.5,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
-                      ),
-                    )
-                  ]),
+              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                if (toUse.number != null)
                   Row(
                     children: [
                       TagsBoxes(
-                          text: toUse.places,
-                          backgroundColor: Colors.deepPurple),
-                      const SizedBox(width: 5),
-                      TagsBoxes(
-                        text: toUse.state() ? "开放" : "关门",
-                        backgroundColor:
-                            toUse.state() ? Colors.green : Colors.red,
+                        text: toUse.number.toString(),
+                        backgroundColor: Colors.grey,
                       ),
+                      const SizedBox(width: 10),
                     ],
+                  ),
+                SizedBox(
+                  width: 150,
+                  child: Text(
+                    toUse.name,
+                    textAlign: TextAlign.left,
+                    textScaleFactor: 1.5,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                  ),
+                )
+              ]),
+              Row(
+                children: [
+                  TagsBoxes(
+                      text: toUse.places, backgroundColor: Colors.deepPurple),
+                  const SizedBox(width: 5),
+                  TagsBoxes(
+                    text: toUse.state() ? "开放" : "关门",
+                    backgroundColor: toUse.state() ? Colors.green : Colors.red,
                   ),
                 ],
               ),
-              if (toUse.commit != null)
-                Row(
-                  children: [
-                    const SizedBox(height: 5),
-                    Flexible(
-                      child: Text("${toUse.commit}"),
-                    )
-                  ],
-                ),
-              const Divider(height: 28.0),
-              GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedHeight(
-                    maxCrossAxisExtent: 375,
-                    height: 70,
-                    mainAxisSpacing: 15.0,
-                    crossAxisSpacing: 15.0),
-                itemCount: toUse.items.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) =>
-                    ItemBox(toUse: toUse.items.elementAt(index)),
-              ),
             ],
           ),
-        ));
+          if (toUse.commit != null)
+            Row(
+              children: [
+                const SizedBox(height: 5),
+                Flexible(
+                  child: Text("${toUse.commit}"),
+                )
+              ],
+            ),
+          const Divider(height: 28.0),
+          GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedHeight(
+                maxCrossAxisExtent: 375,
+                height: 70,
+                mainAxisSpacing: 15.0,
+                crossAxisSpacing: 15.0),
+            itemCount: toUse.items.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) =>
+                ItemBox(toUse: toUse.items.elementAt(index)),
+          ),
+        ],
+      ),
+    ));
   }
 }
 

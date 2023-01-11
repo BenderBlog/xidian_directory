@@ -35,15 +35,12 @@ class TeleBookWindow extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) => ListView(
-        children: [
-          for (var i in _getCache)
-            DepartmentWindow(
-              toUse: i,
-              white: constraints.maxWidth < 900
-                  ? 12.5
-                  : constraints.maxWidth * 0.1,
-            ),
-        ],
+        padding: EdgeInsets.symmetric(
+          horizontal:
+              constraints.maxWidth < 900 ? 12.5 : constraints.maxWidth * 0.05,
+          vertical: 0.0,
+        ),
+        children: [for (var i in _getCache) DepartmentWindow(toUse: i)],
       ),
     );
   }
@@ -53,11 +50,9 @@ class TeleBookWindow extends StatelessWidget {
 /// which stored in an information class called [TeleyInformation].
 class DepartmentWindow extends StatelessWidget {
   final TeleyInformation toUse;
-  final double white;
   final List<Widget> mainCourse = [];
 
-  DepartmentWindow({Key? key, required this.toUse, required this.white})
-      : super(key: key) {
+  DepartmentWindow({Key? key, required this.toUse}) : super(key: key) {
     mainCourse.addAll([
       Text(
         toUse.title,
@@ -84,7 +79,6 @@ class DepartmentWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ShadowBox(
-      margin: EdgeInsets.symmetric(horizontal: white, vertical: 12.5),
       child: Container(
         padding: const EdgeInsets.all(12.5),
         child: Column(
