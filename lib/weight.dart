@@ -36,8 +36,8 @@ class ShadowBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: margin,
-      //color: Colors.deepPurple,
-      elevation: 20.0,
+      // color: Colors.deepPurple,
+      elevation: 10.0,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(5)),
       ),
@@ -63,7 +63,7 @@ class TagsBoxes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(2.5),
+      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 2.0),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: const BorderRadius.all(Radius.circular(5)),
@@ -71,6 +71,7 @@ class TagsBoxes extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(color: textColor),
+        textScaleFactor: 0.95,
       ),
     );
   }

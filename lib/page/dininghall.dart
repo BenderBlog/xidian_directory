@@ -174,28 +174,30 @@ class CafeteriaCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                if (toUse.number != null)
-                  Row(
-                    children: [
-                      TagsBoxes(
-                        text: toUse.number.toString(),
-                        backgroundColor: Colors.grey,
-                      ),
-                      const SizedBox(width: 10),
-                    ],
-                  ),
-                SizedBox(
-                  width: 150,
-                  child: Text(
-                    toUse.name,
-                    textAlign: TextAlign.left,
-                    textScaleFactor: 1.5,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: true,
-                  ),
-                )
-              ]),
+              Row(
+                children: [
+                  if (toUse.number != null)
+                    Row(
+                      children: [
+                        TagsBoxes(
+                          text: toUse.number.toString(),
+                          backgroundColor: Colors.grey,
+                        ),
+                        const SizedBox(width: 10),
+                      ],
+                    ),
+                  SizedBox(
+                    width: 150,
+                    child: Text(
+                      toUse.name,
+                      textAlign: TextAlign.left,
+                      textScaleFactor: 1.25,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                    ),
+                  )
+                ],
+              ),
               Row(
                 children: [
                   TagsBoxes(
@@ -209,6 +211,7 @@ class CafeteriaCard extends StatelessWidget {
               ),
             ],
           ),
+          if (toUse.commit != null) const SizedBox(height: 10),
           if (toUse.commit != null)
             Row(
               children: [
@@ -222,7 +225,7 @@ class CafeteriaCard extends StatelessWidget {
           GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedHeight(
                 maxCrossAxisExtent: 375,
-                height: 70,
+                height: 60,
                 mainAxisSpacing: 15.0,
                 crossAxisSpacing: 15.0),
             itemCount: toUse.items.length,
@@ -252,22 +255,23 @@ class ItemBox extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              toUse.commit == null
-                  ? toUse.name
-                  : "${toUse.name}\n${toUse.commit!}",
-              textScaleFactor: 1.10,
-              style: TextStyle(
-                decoration: !toUse.status
-                    ? TextDecoration.lineThrough
-                    : TextDecoration.none,
+            Flexible(
+              child: Text(
+                toUse.commit == null
+                    ? toUse.name
+                    : "${toUse.name}\n${toUse.commit!}",
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  decoration: !toUse.status
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
+                ),
               ),
             ),
             Row(
               children: [
                 Text(
                   "${toUse.price.join(" 或 ")} 元每${toUse.unit}",
-                  textScaleFactor: 1.10,
                   style: TextStyle(
                     decoration: !toUse.status
                         ? TextDecoration.lineThrough

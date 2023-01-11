@@ -141,7 +141,7 @@ class _ComprehensiveWindowState extends State<ComprehensiveWindow> {
                   vertical: 0.0,
                 ),
                 gridDelegate: SliverGridDelegateWithFixedHeight(
-                    maxCrossAxisExtent: 324, height: 200),
+                    maxCrossAxisExtent: 324, height: 190),
                 itemCount: toUse.results.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) =>
@@ -201,48 +201,59 @@ class ShopCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  toUse.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.left,
-                  textScaleFactor: 1.25,
-                ),
-                TagsBoxes(
-                  text: toUse.status ? "开放" : "关闭",
-                  backgroundColor: toUse.status ? Colors.green : Colors.red,
-                )
-              ],
-            ),
-            Row(
-              children: [
-                _iconForTarget(),
-                const SizedBox(width: 5),
-                for (var i in toUse.tags)
-                  Row(
-                    children: [
-                      TagsBoxes(
-                        text: i,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        toUse.name,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,
+                        textScaleFactor: 1.25,
                       ),
-                      const SizedBox(width: 4)
-                    ],
-                  )
+                    ),
+                    TagsBoxes(
+                      text: toUse.status ? "开放" : "关闭",
+                      backgroundColor: toUse.status ? Colors.green : Colors.red,
+                    )
+                  ],
+                ),
+                const Divider(),
+                Row(
+                  children: [
+                    _iconForTarget(),
+                    const SizedBox(width: 5),
+                    for (var i in toUse.tags)
+                      Row(
+                        children: [
+                          TagsBoxes(text: i),
+                          const SizedBox(width: 4)
+                        ],
+                      )
+                  ],
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2.5, 0, 0, 0),
+                  child: Text(
+                    toUse.description ?? "没有描述",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(2.5, 0, 0, 0),
-              child: Text(
-                toUse.description ?? "没有描述",
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
+                  child: const Text(
+                    "详情",
+                  ),
                   onPressed: () => showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -260,17 +271,18 @@ class ShopCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  child: const Text("详情"),
                 ),
                 /*
-                    TextButton(
-                      // To be implemented.
-                      onPressed: () {},
-                      child: const Text("纠正"),
-                    ),
-                    */
+                TextButton(
+                  // To be implemented.
+                  onPressed: () {},
+                  child: const Text("纠正"),
+                ),
+                */
                 Text(
-                    "上次更新在 ${toUse.updatedAt.toLocal().toString().substring(0, 19)}"),
+                  "上次更新 ${toUse.updatedAt.toLocal().toString().substring(0, 19)}",
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ],
