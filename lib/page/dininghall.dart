@@ -20,8 +20,8 @@ if you want to use.
 */
 
 import 'package:flutter/material.dart';
+import 'package:xidian_directory/widget.dart';
 import 'package:xidian_directory/SliverGridDelegateWithFixedHeight.dart';
-import 'package:xidian_directory/weight.dart';
 import 'package:xidian_directory/model/cafeteria_window_item_entity.dart';
 import 'package:xidian_directory/repository/session.dart';
 

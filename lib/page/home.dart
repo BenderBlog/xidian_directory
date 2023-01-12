@@ -21,10 +21,18 @@ if you want to use.
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:xidian_directory/weight.dart';
-import 'package:xidian_directory/page/comprehensive.dart';
-import 'package:xidian_directory/page/dininghall.dart';
-import 'package:xidian_directory/page/telebook.dart';
+import 'package:xidian_directory/widget.dart';
+import 'package:xidian_directory/page/comprehensive.dart' deferred as com;
+import 'package:xidian_directory/page/dininghall.dart' deferred as din;
+import 'package:xidian_directory/page/telebook.dart' deferred as tel;
+
+var app = MaterialApp(
+  title: '西电目录',
+  theme: ThemeData(
+    primarySwatch: Colors.deepPurple,
+  ),
+  home: const XidianDir(),
+);
 
 class XidianDir extends StatefulWidget {
   const XidianDir({super.key});
@@ -34,22 +42,67 @@ class XidianDir extends StatefulWidget {
 }
 
 class _XidianDirState extends State<XidianDir> {
-  Widget toShow = const ComprehensiveWindow();
-  String current = "综合楼";
+  final Widget _com_win = FutureBuilder<void>(
+    future: com.loadLibrary(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        return com.ComprehensiveWindow();
+      }
+      return loading;
+    },
+  );
 
-  void changePage(Widget newPage) => setState(() {
-        toShow = newPage;
-        if (toShow.runtimeType == ComprehensiveWindow) {
-          current = "综合楼";
+  final Widget _din_win = FutureBuilder<void>(
+    future: din.loadLibrary(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
         }
-        if (toShow.runtimeType == DiningHallWindow) {
-          current = "食堂";
+        return din.DiningHallWindow();
+      }
+      return loading;
+    },
+  );
+
+  final Widget _tel_win = FutureBuilder<void>(
+    future: tel.loadLibrary(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
         }
-        if (toShow.runtimeType == TeleBookWindow) {
-          current = "电话本";
+        return tel.TeleBookWindow();
+      }
+      return loading;
+    },
+  );
+
+  late Widget _toShow;
+  String _current = "综合楼";
+
+  void changePage(String current) => setState(() {
+        _current = current;
+        if (_current == "综合楼") {
+          _toShow = _com_win;
+        }
+        if (_current == "食堂") {
+          _toShow = _din_win;
+        }
+        if (_current == "电话本") {
+          _toShow = _tel_win;
         }
         if (!isDesktop(context)) Navigator.of(context).pop();
       });
+
+  @override
+  void initState() {
+    _toShow = _com_win;
+    super.initState();
+  }
 
   var buttons = [
     IconButton(
@@ -77,10 +130,10 @@ class _XidianDirState extends State<XidianDir> {
           Expanded(
             child: Scaffold(
               appBar: AppBar(
-                title: Text(current),
+                title: Text(_current),
                 actions: buttons,
               ),
-              body: SafeArea(child: toShow),
+              body: SafeArea(child: _toShow),
             ),
           ),
         ],
@@ -88,10 +141,10 @@ class _XidianDirState extends State<XidianDir> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: Text(current),
+          title: Text(_current),
           actions: buttons,
         ),
-        body: SafeArea(child: toShow),
+        body: SafeArea(child: _toShow),
         drawer: ListDrawer(mainPageCallback: changePage),
       );
     }
@@ -99,7 +152,7 @@ class _XidianDirState extends State<XidianDir> {
 }
 
 class ListDrawer extends StatelessWidget {
-  final ValueChanged<Widget> mainPageCallback;
+  final ValueChanged<String> mainPageCallback;
   const ListDrawer({super.key, required this.mainPageCallback});
 
   @override
@@ -119,21 +172,21 @@ class ListDrawer extends StatelessWidget {
               leading: const Icon(Icons.store_mall_directory),
               title: const Text('综合楼'),
               onTap: () {
-                mainPageCallback(const ComprehensiveWindow());
+                mainPageCallback("综合楼");
               },
             ),
             ListTile(
               leading: const Icon(Icons.restaurant),
               title: const Text('食堂'),
               onTap: () {
-                mainPageCallback(const DiningHallWindow());
+                mainPageCallback("食堂");
               },
             ),
             ListTile(
               leading: const Icon(Icons.phone),
               title: const Text('电话本'),
               onTap: () {
-                mainPageCallback(TeleBookWindow());
+                mainPageCallback("电话本");
               },
             ),
           ],

@@ -20,7 +20,7 @@ if you want to use.
 */
 
 import 'package:flutter/material.dart';
-import 'package:xidian_directory/weight.dart';
+import 'package:xidian_directory/widget.dart';
 import 'package:xidian_directory/model/telephone.dart';
 import 'package:xidian_directory/repository/session.dart';
 

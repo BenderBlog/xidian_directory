@@ -20,24 +20,9 @@ if you want to use.
 */
 
 import 'package:flutter/material.dart';
-import 'package:xidian_directory/page/home.dart';
+import 'package:xidian_directory/page/home.dart' deferred as home;
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '西电目录',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-      ),
-      home: const XidianDir(),
-    );
-  }
+void main() async {
+  await home.loadLibrary();
+  runApp(home.app);
 }

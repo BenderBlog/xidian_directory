@@ -76,3 +76,13 @@ class TagsBoxes extends StatelessWidget {
     );
   }
 }
+
+Widget loading = Center(
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: const [
+      CircularProgressIndicator(),
+      Text("组件正在加载"),
+    ],
+  ),
+);
